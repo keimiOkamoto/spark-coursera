@@ -32,17 +32,20 @@ object WikipediaRanking {
     rdd.filter(wikiArticle => wikiArticle.mentionsLanguage(lang)).aggregate(0)((acc, value) => acc + 1, (acc1, acc2) => acc1 + acc2)
   }
 
-  /* (1) Use `occurrencesOfLang` to compute the ranking of the languages
+  /** (1) Use `occurrencesOfLang` to compute the ranking of the languages
    *     (`val langs`) by determining the number of Wikipedia articles that
    *     mention each language at least once. Don't forget to sort the
    *     languages by their occurrence, in decreasing order!
    *
    *   Note: this operation is long-running. It can potentially run for
    *   several seconds.
+    *   Flatmap? GroupBy?
    */
-  def rankLangs(langs: List[String], rdd: RDD[WikipediaArticle]): List[(String, Int)] = ???
+  def rankLangs(langs: List[String], rdd: RDD[WikipediaArticle]): List[(String, Int)] = {
+    langs.map(lang => (lang, occurrencesOfLang(lang, rdd))).sortBy(_._2).reverse
+  }
 
-  /* Compute an inverted index of the set of articles, mapping each language
+  /** Compute an inverted index of the set of articles, mapping each language
    * to the Wikipedia pages in which it occurs.
    */
   def makeIndex(langs: List[String], rdd: RDD[WikipediaArticle]): RDD[(String, Iterable[WikipediaArticle])] = ???
